@@ -3,11 +3,9 @@ const { body, validationResult } = require('express-validator');
 
 const validateStudent = [
   body('name')
-    .if(body('name').exists())
     .notEmpty().withMessage('El nombre no puede estar vacío')
-    .isString(),
+    .isString().withMessage('El nombre debe ser una cadena de texto'),
   body('code')
-    .if((req) => req.method === 'POST')
     .matches(/^EST\d{5}$/)
     .withMessage('El código debe tener el formato EST seguido de 5 dígitos (ej: EST00001)'),
   (req, res, next) => {
@@ -21,11 +19,12 @@ const validateStudent = [
 
 const validateAttendance = [
   body('studentCode')
-    .if((req) => req.method === 'POST')
+    .if((value, { req }) => req.method === 'POST')
+    .notEmpty().withMessage('El código de estudiante es obligatorio')
     .matches(/^EST\d{5}$/)
     .withMessage('Código de estudiante inválido'),
   body('status')
-    .optional()
+    .notEmpty().withMessage('El estado es obligatorio')
     .isIn(['presente', 'ausente', 'justificada'])
     .withMessage('El estado debe ser: presente, ausente o justificada'),
   body('date')

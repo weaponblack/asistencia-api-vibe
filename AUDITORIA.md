@@ -69,3 +69,13 @@
 - **Descripción:** No se han implementado pruebas automatizadas para validar la lógica de negocio.
 - **Evidencia:** El script de test está vacío y no existen archivos de pruebas en el repositorio.
 - **Impacto:** Incapacidad de asegurar que cambios futuros no rompan la funcionalidad existente (riesgo de regresión).
+
+
+# Bugs confirmados por pruebas
+
+## Bug 1 — JSON malformado devuelve 500 en lugar de 400
+- **Severidad:** baja
+- **Archivo/línea:** `src/app.js`, líneas 28-34
+- **Descripción:** El error handler global captura el error de parseo de JSON (que ocurre antes de que lleguen a los controladores) y devuelve un status 500 genérico en lugar del 400 que correspondería.
+- **Evidencia:** Al enviar JSON inválido en el cuerpo de la petición, el servidor responde con 500.
+- **Impacto:** El cliente recibe un código de error HTTP incorrecto, lo que puede confundir en la lógica de manejo de errores en el front-end.

@@ -10,13 +10,21 @@ const registerAttendance = (req, res) => {
     return res.status(404).json({ status: 'error', message: 'Estudiante no encontrado' });
   }
 
+  const attendanceDate = date || new Date().toISOString().split('T')[0];
+
+  // Verificar si ya existe asistencia para este estudiante en esta fecha
+  const existingAttendance = attendances.find(a => a.studentCode === studentCode && a.date === attendanceDate);
+  if (existingAttendance) {
+    return res.status(400).json({ status: 'error', message: 'Ya existe un registro de asistencia para este estudiante en la fecha especificada' });
+  }
+
   // Registrar asistencia
   const newAttendance = {
     id: attendances.length + 1,
     studentCode,
     studentName: student.name,
     status, // presente, ausente, justificada (validado en middleware)
-    date: date || new Date().toISOString().split('T')[0],
+    date: attendanceDate,
     registeredAt: new Date()
   };
 

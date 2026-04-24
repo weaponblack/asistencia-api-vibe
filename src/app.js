@@ -23,8 +23,17 @@ app.get('/', (req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ status: 'error', message: 'Algo salió mal en el servidor' });
+  const status = err.status || 500;
+  
+  // Log only server errors (5xx)
+  if (status >= 500) {
+    console.error(err.stack);
+  }
+
+  res.status(status).json({ 
+    status: 'error', 
+    message: status === 400 && err instanceof SyntaxError ? 'JSON malformado' : 'Algo salió mal en el servidor' 
+  });
 });
 
 module.exports = app;
